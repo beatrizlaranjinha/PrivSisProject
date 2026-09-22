@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PolicySet xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"
+           PolicySetId="HospitalPolicySet"
+           Version="1.0"
+           PolicyCombiningAlgId="urn:oasis:names:tc:xacml:1.0:policy-combining-algorithm:first-applicable">
+
+    <Target/>
+
+    <!-- Alínea 1: Patients can access all of their own data. -->
+    <Policy PolicyId="PatientOwnData"
+            Version="1.0"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Patient</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+
+        <Rule RuleId="PatientOwnDataRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-set-equals">
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="id"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                AttributeId="id"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Apply>
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-subset">
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                AttributeId="resource-type"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">PatientData</AttributeValue>
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">AppointmentData</AttributeValue>
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">PaymentData</AttributeValue>
+                        </Apply>
+                    </Apply>
+
+                </Apply>
+            </Condition>
+        </Rule>
+
+    </Policy>
+
+    <!-- Alínea 2: Employees can access all of their own data. -->
+    <Policy PolicyId="EmployeeOwnData"
+            Version="1.0"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+
+        <Target>
+            <AnyOf>
+
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Clerk</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Accountant</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Doctor</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Nurse</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ITAdmin</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+
+            </AnyOf>
+        </Target>
+
+        <Rule RuleId="EmployeeOwnDataRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-set-equals">
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="id"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                AttributeId="id"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Apply>
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">EmployeeData</AttributeValue>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                    AttributeId="resource-type"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+
+                </Apply>
+            </Condition>
+        </Rule>
+
+    </Policy>
+
+    <!-- Alínea 3: Clerks can access appointment data for scheduling and check-in. -->
+    <Policy PolicyId="ClerkAppointmentData"
+            Version="1.0"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Clerk</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+
+        <Rule RuleId="ClerkRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">AppointmentData</AttributeValue>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                    AttributeId="resource-type"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-subset">
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+                                AttributeId="context"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Scheduling</AttributeValue>
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Check-in</AttributeValue>
+                        </Apply>
+                    </Apply>
+
+                </Apply>
+            </Condition>
+        </Rule>
+
+    </Policy>
+
+    <!-- Alínea 4: Accountants can access payment or employee data for billing and payments. -->
+    <Policy PolicyId="AccountantBillingData"
+            Version="1.0"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Accountant</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+
+        <Rule RuleId="AccountantRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-subset">
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                AttributeId="resource-type"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">PaymentData</AttributeValue>
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">EmployeeData</AttributeValue>
+                        </Apply>
+                    </Apply>
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Billing and Payments</AttributeValue>
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+                                    AttributeId="context"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+
+                </Apply>
+            </Condition>
+        </Rule>
+
+    </Policy>
+
+    <!-- Alínea 5: Doctors and Nurses can access their patients and appointment data. -->
+    <Policy PolicyId="DoctorOwnPatientsNonEmergency"
+            Version="1.0"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+
+        <Target>
+            <AnyOf>
+
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Doctor</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Nurse</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+
+            </AnyOf>
+        </Target>
+
+        <Rule RuleId="DoctorOwnPatientRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-set-equals">
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="id"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                AttributeId="doctor-id"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Apply>
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">PatientData</AttributeValue>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                    AttributeId="resource-type"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+
+                </Apply>
+            </Condition>
+        </Rule>
+
+        <Rule RuleId="DoctorAppointmentDataRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">AppointmentData</AttributeValue>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                    AttributeId="resource-type"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-set-equals">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                    AttributeId="id"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                    AttributeId="employee-id"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-set-equals">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                    AttributeId="id"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                    AttributeId="doctor-id"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+
+                    </Apply>
+
+                </Apply>
+            </Condition>
+        </Rule>
+
+    </Policy>
+
+    <!-- Alínea 6: Doctors and Nurses can access any patient data in an emergency. -->
+    <Policy PolicyId="DoctorEmergency"
+            Version="1.0"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+
+        <Target>
+            <AnyOf>
+
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Doctor</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Nurse</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+
+            </AnyOf>
+        </Target>
+
+        <Rule RuleId="DoctorEmergencyRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Emergency</AttributeValue>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+                                    AttributeId="context"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">PatientData</AttributeValue>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                    AttributeId="resource-type"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+
+                </Apply>
+            </Condition>
+        </Rule>
+
+    </Policy>
+
+    <!-- Alínea 7: IT Admins can access any information in an emergency. -->
+    <Policy PolicyId="ITAdminEmergency"
+            Version="1.0"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+
+        <Target>
+            <AnyOf>
+                <AllOf>
+
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ITAdmin</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Emergency</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+                                AttributeId="context"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+
+                </AllOf>
+            </AnyOf>
+        </Target>
+
+        <Rule RuleId="ITAdminEmergencyRule" Effect="Permit"/>
+
+    </Policy>
+
+    <!-- Alínea 8: IT Admins can access employee data for hiring outside emergencies. -->
+    <Policy PolicyId="ITAdminHiring"
+            Version="1.0"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ITAdmin</AttributeValue>
+                        <AttributeDesignator
+                                Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                AttributeId="role"
+                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+
+        <Rule RuleId="ITAdminHiringRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">EmployeeData</AttributeValue>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                    AttributeId="resource-type"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Hiring</AttributeValue>
+
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator
+                                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+                                    AttributeId="context"
+                                    DataType="http://www.w3.org/2001/XMLSchema#string"
+                                    MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+
+                </Apply>
+            </Condition>
+        </Rule>
+
+    </Policy>
+
+    <!-- Default: deny every access not permitted above. -->
+    <Policy PolicyId="DefaultDeny"
+            Version="1.0"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+
+        <Target/>
+
+        <Rule RuleId="DenyAllRule" Effect="Deny"/>
+
+    </Policy>
+
+</PolicySet>
