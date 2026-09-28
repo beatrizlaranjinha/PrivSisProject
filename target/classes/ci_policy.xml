@@ -464,6 +464,163 @@
 
     </Policy>
 
+    <Policy PolicyId="ConsentPolicy" Version="1.0" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">marketing</AttributeValue>
+                        <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action" AttributeId="action-id" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+        <Rule RuleId="MarketingConsentRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">true</AttributeValue>
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-one-and-only">
+                            <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment" AttributeId="consent-marketing" DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">false</AttributeValue>
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-one-and-only">
+                            <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment" AttributeId="consent-withdrawn" DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+                </Apply>
+            </Condition>
+        </Rule>
+    </Policy>
+
+    <!-- 2. ErasurePolicy corrigida -->
+    <Policy PolicyId="ErasurePolicy" Version="1.0" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+        <Target/>
+        <Rule RuleId="DPORule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">true</AttributeValue>
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-one-and-only">
+                            <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" AttributeId="erasure-requested" DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">DPO</AttributeValue>
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                            <AttributeDesignator Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" AttributeId="role" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+                </Apply>
+            </Condition>
+        </Rule>
+        <Rule RuleId="ErasureDenyRule" Effect="Deny">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                    <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">true</AttributeValue>
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-one-and-only">
+                        <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" AttributeId="erasure-requested" DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="false"/>
+                    </Apply>
+                </Apply>
+            </Condition>
+        </Rule>
+    </Policy>
+
+    <!-- 3. RetentionPolicy corrigida -->
+    <Policy PolicyId="RetentionPolicy" Version="1.0" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+        <Target/>
+        <Rule RuleId="AuditorOrDPORule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">true</AttributeValue>
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-one-and-only">
+                            <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" AttributeId="retention-expired" DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="false"/>
+                        </Apply>
+                    </Apply>
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Auditor</AttributeValue>
+                            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                                <AttributeDesignator Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" AttributeId="role" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+                            </Apply>
+                        </Apply>
+                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">DPO</AttributeValue>
+                            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+                                <AttributeDesignator Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" AttributeId="role" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+                            </Apply>
+                        </Apply>
+                    </Apply>
+                </Apply>
+            </Condition>
+        </Rule>
+        <Rule RuleId="RetentionDenyRule" Effect="Deny">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                    <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">true</AttributeValue>
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-one-and-only">
+                        <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" AttributeId="retention-expired" DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="false"/>
+                    </Apply>
+                </Apply>
+            </Condition>
+        </Rule>
+    </Policy>
+
+    <!-- 4. SpecialCategoryPolicy corrigida -->
+    <Policy PolicyId="SpecialCategoryPolicy" Version="1.0" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">health-data</AttributeValue>
+                        <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" AttributeId="data-category" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+        <Rule RuleId="HealthDataResearchConsentRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                    <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">true</AttributeValue>
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:boolean-one-and-only">
+                        <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment" AttributeId="consent-research" DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="false"/>
+                    </Apply>
+                </Apply>
+            </Condition>
+        </Rule>
+    </Policy>
+
+    <!-- 5. LawfulBasisPolicy corrigida -->
+    <Policy PolicyId="LawfulBasisPolicy" Version="1.0" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">read</AttributeValue>
+                        <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action" AttributeId="action-id" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+        <Rule RuleId="LawfulBasisRule" Effect="Permit">
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-subset">
+                    <AttributeDesignator Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment" AttributeId="lawful-basis" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">consent</AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">contract</AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">legal-obligation</AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">vital-interests</AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">public-task</AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">legitimate-interests</AttributeValue>
+                    </Apply>
+                </Apply>
+            </Condition>
+        </Rule>
+    </Policy>
     <!-- Alínea 7: IT Admins can access any information in an emergency. -->
     <Policy PolicyId="ITAdminEmergency"
             Version="1.0"
