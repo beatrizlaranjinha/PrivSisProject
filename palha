@@ -1,0 +1,19 @@
+-- 1. Paciente com consentimento de marketing ativo
+INSERT INTO patients (name, birth_date, address, postal_code, card_number, created_at, updated_at) 
+VALUES ('Patient Marketing', '1990-01-01', 'Rua A', '1000-000', 'CARD123', datetime('now'), datetime('now'));
+
+INSERT INTO consent_records (patient_subject_id, subject_type, purpose, granted, granted_at) 
+VALUES (last_insert_rowid(), 'PATIENT', 'marketing', 1, datetime('now'));
+
+
+-- 2. Paciente com pedido de apagamento (erasure requested = true)
+INSERT INTO patients (name, birth_date, address, postal_code, card_number, erasure_requested, created_at, updated_at) 
+VALUES ('Patient Erasure', '1985-05-05', 'Rua B', '2000-000', 'CARD456', 1, datetime('now'), datetime('now'));
+
+
+-- 3. Paciente com data de retenção expirada no passado
+INSERT INTO patients (name, birth_date, address, postal_code, card_number, retention_until, created_at, updated_at) 
+VALUES ('Patient Expired Retention', '1975-10-10', 'Rua C', '3000-000', 'CARD789', '2020-01-01 00:00:00', datetime('now'), datetime('now'));
+
+
+Script/txt do lab2
